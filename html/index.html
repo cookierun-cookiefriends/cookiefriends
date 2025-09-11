@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토벌전 참여 현황</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(44, 62, 80, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #ecf0f1;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            color: #ecf0f1;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 15px 8px;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            line-height: 1.2;
+        }
+
+        .data-table td {
+            padding: 15px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+            font-size: 12px;
+            background: rgba(236, 240, 241, 0.05);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .player-name {
+            color: #ecf0f1;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .damage-count {
+            color: #f39c12;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .damage-amount {
+            color: #f39c12;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .ticket-damage {
+            color: #9b59b6;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 3px;
+            opacity: 0.8;
+        }
+
+        .damage-change {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 10px;
+            min-width: 50px;
+            color: white;
+        }
+
+        .damage-increase {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .damage-decrease {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .change-arrow {
+            font-size: 11px;
+            margin-right: 2px;
+        }
+
+        .hidden-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .footer {
+            background: #2c3e50;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(52, 73, 94, 0.8);
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .format-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .format-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #f39c12;
+            cursor: pointer;
+        }
+
+        .format-option label {
+            color: #ecf0f1;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .format-option:hover label {
+            color: #f39c12;
+        }
+
+        .season-select {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            min-width: 250px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: linear-gradient(135deg, #f39c12, #e67e22), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 16 16'%3e%3cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat, no-repeat;
+            background-position: 0 0, right 15px center;
+            background-size: 100% 100%, 16px;
+            padding-right: 45px;
+        }
+
+        .season-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+        }
+
+        .season-select option {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>토벌전 참여 현황</h1>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th style="width: 15%;">유저정보</th>
+            <th style="width: 14%;">드래곤</th>
+            <th style="width: 14%;">대천사</th>
+            <th style="width: 14%;">기계신</th>
+            <th style="width: 12%;">총합</th>
+            <th style="width: 10%;">드래곤<br>전시즌대비</th>
+            <th style="width: 10%;">대천사<br>전시즌대비</th>
+            <th style="width: 11%;">기계신<br>전시즌대비</th>
+            <th style="width: 10%;">드래곤<br>티켓당대비</th>
+            <th style="width: 10%;">대천사<br>티켓당대비</th>
+            <th style="width: 11%;">기계신<br>티켓당대비</th>
+        </tr>
+        </thead>
+        <tbody id="player-tbody">
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div class="format-options">
+            <div class="format-option">
+                <input type="radio" id="korean-format" name="format" value="korean" checked>
+                <label for="korean-format">만단위 구분</label>
+            </div>
+            <div class="format-option">
+                <input type="radio" id="comma-format" name="format" value="comma">
+                <label for="comma-format">천단위 구분</label>
+            </div>
+        </div>
+        <select class="season-select" id="season-select">
+        </select>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // 데이터
+        const seasonData = [
+            ['시즌 20-3', ['드래곤', '기계신']],
+            ['시즌 21-1', ['대천사', '기계신']],
+            ['시즌 21-2', ['드래곤', '대천사']]
+        ];
+
+        const playerData = {
+            '시즌 20-3': [
+                ['1번', 9, 45000000000, 0, 0, 7, 160000000000],
+                ['2번', 8, 40000000000, 0, 0, 8, 130000000000],
+                ['3번', 7, 35000000000, 0, 0, 7, 100000000000]
+            ],
+            '시즌 21-1': [
+                ['1번', 0, 0, 12, 160000000000, 12, 200000000000],
+                ['2번', 0, 0, 11, 130000000000, 11, 170000000000],
+                ['3번', 0, 0, 10, 110000000000, 10, 140000000000]
+            ],
+            '시즌 21-2': [
+                ['1번', 13, 70000000000, 13, 180000000000, 0, 0],
+                ['2번', 12, 60000000000, 12, 120000000000, 0, 0],
+                ['3번', 11, 50000000000, 11, 130000000000, 0, 0]
+            ]
+        };
+
+        // 숫자 포맷팅 함수들
+        function formatKorean(num) {
+            if (!num || num === 0) return '';
+
+            let result = '';
+            let remaining = Math.floor(num);
+
+            if (remaining >= 100000000) {
+                const eok = Math.floor(remaining / 100000000);
+                result += eok + '억';
+                remaining = remaining % 100000000;
+            }
+
+            if (remaining >= 10000) {
+                const man = Math.floor(remaining / 10000);
+                result += man + '만';
+                remaining = remaining % 10000;
+            }
+
+            if (remaining > 0) {
+                result += remaining;
+            }
+
+            return result;
+        }
+
+        function formatComma(num) {
+            if (!num || num === 0) return '';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function formatNumber(num) {
+            if (!num || num === 0) return '';
+            const format = $('input[name="format"]:checked').val();
+            return format === 'korean' ? formatKorean(num) : formatComma(num);
+        }
+
+        // 티켓당 딜량 계산
+        function calculateTicketDamage(damage, count) {
+            if (!damage || !count || count === 0) return 0;
+            return Math.floor(damage / count);
+        }
+
+        // 유틸리티 함수들
+        function calculateChange(current, previous) {
+            if (!previous || !current || previous === 0) return '';
+            const changePercent = ((current - previous) / previous * 100).toFixed(1);
+            return changePercent >= 0 ? `+${changePercent}%` : `${changePercent}%`;
+        }
+
+        function getChangeClass(changeStr) {
+            return changeStr.includes('+') ? 'damage-increase' : 'damage-decrease';
+        }
+
+        function getChangeArrow(changeStr) {
+            return changeStr.includes('+') ? '↗' : '↘';
+        }
+
+        function findPreviousSeasonTicketData(currentSeasonName, playerName, bossIndex) {
+            const seasons = seasonData.map(s => s[0]);
+            const currentIndex = seasons.indexOf(currentSeasonName);
+
+            for (let i = currentIndex - 1; i >= 0; i--) {
+                const seasonName = seasons[i];
+                const seasonInfo = seasonData.find(s => s[0] === seasonName);
+                const players = playerData[seasonName];
+
+                if (!seasonInfo || !players) continue;
+
+                const activeBosses = seasonInfo[1];
+                const bossName = ['드래곤', '대천사', '기계신'][bossIndex];
+
+                if (activeBosses.includes(bossName)) {
+                    const player = players.find(p => p[0] === playerName);
+                    if (player) {
+                        const count = player[bossIndex * 2 + 1];
+                        const damage = player[bossIndex * 2 + 2];
+                        if (damage > 0 && count > 0) {
+                            return calculateTicketDamage(damage, count);
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        function findPreviousSeasonTotalData(currentSeasonName, playerName, bossIndex) {
+            const seasons = seasonData.map(s => s[0]);
+            const currentIndex = seasons.indexOf(currentSeasonName);
+
+            for (let i = currentIndex - 1; i >= 0; i--) {
+                const seasonName = seasons[i];
+                const seasonInfo = seasonData.find(s => s[0] === seasonName);
+                const players = playerData[seasonName];
+
+                if (!seasonInfo || !players) continue;
+
+                const activeBosses = seasonInfo[1];
+                const bossName = ['드래곤', '대천사', '기계신'][bossIndex];
+
+                if (activeBosses.includes(bossName)) {
+                    const player = players.find(p => p[0] === playerName);
+                    if (player) {
+                        const damage = player[bossIndex * 2 + 2];
+                        if (damage > 0) {
+                            return damage;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        // 시즌 선택 박스 초기화
+        function initSeasonSelect() {
+            const $select = $('#season-select');
+            $select.empty();
+
+            for (let i = seasonData.length - 1; i >= 0; i--) {
+                const season = seasonData[i];
+                $select.append(`<option value="${season[0]}">≡ ${season[0]}</option>`);
+            }
+        }
+
+        // 테이블 업데이트
+        function updateTable(seasonName) {
+            const players = playerData[seasonName];
+            const seasonInfo = seasonData.find(s => s[0] === seasonName);
+            if (!players || !seasonInfo) return;
+
+            const activeBosses = seasonInfo[1];
+            const $tbody = $('#player-tbody');
+            $tbody.empty();
+
+            players.forEach(player => {
+                const [name, dragonCount, dragonDamage, angelCount, angelDamage, machineCount, machineDamage] = player;
+
+                const totalCount = dragonCount + angelCount + machineCount;
+                const totalDamage = dragonDamage + angelDamage + machineDamage;
+
+                const bossData = [
+                    { count: dragonCount, damage: dragonDamage, name: '드래곤', index: 0 },
+                    { count: angelCount, damage: angelDamage, name: '대천사', index: 1 },
+                    { count: machineCount, damage: machineDamage, name: '기계신', index: 2 }
+                ];
+
+                // 총 딜량 변화와 티켓당 딜량 변화 계산
+                const totalDamageChanges = bossData.map(boss => {
+                    if (activeBosses.includes(boss.name) && boss.damage > 0) {
+                        const prevTotalDamage = findPreviousSeasonTotalData(seasonName, name, boss.index);
+                        return calculateChange(boss.damage, prevTotalDamage);
+                    }
+                    return '';
+                });
+
+                const ticketChanges = bossData.map(boss => {
+                    if (activeBosses.includes(boss.name) && boss.damage > 0 && boss.count > 0) {
+                        const currentTicketDamage = calculateTicketDamage(boss.damage, boss.count);
+                        const prevTicketDamage = findPreviousSeasonTicketData(seasonName, name, boss.index);
+                        return calculateChange(currentTicketDamage, prevTicketDamage);
+                    }
+                    return '';
+                });
+
+                const $row = $('<tr>');
+
+                $row.append(`<td class="player-name">${name}</td>`);
+
+                // 각 보스별 딜량 표시 (티켓당 딜량 포함)
+                bossData.forEach(boss => {
+                    const isActive = activeBosses.includes(boss.name);
+                    const hasData = boss.count > 0 && boss.damage > 0;
+
+                    if (isActive && hasData) {
+                        const ticketDamage = calculateTicketDamage(boss.damage, boss.count);
+                        $row.append(`
+                                <td>
+                                    <div class="damage-count">${boss.count}회</div>
+                                    <div class="damage-amount">${formatNumber(boss.damage)}</div>
+                                    <div class="ticket-damage">(${formatNumber(ticketDamage)})</div>
+                                </td>
+                            `);
+                    } else {
+                        $row.append(`
+                                <td>
+                                    <div class="hidden-content">0회</div>
+                                    <div class="hidden-content">0</div>
+                                </td>
+                            `);
+                    }
+                });
+
+                $row.append(`
+                        <td>
+                            <div class="damage-count">${totalCount}회</div>
+                            <div class="damage-amount">${formatNumber(totalDamage)}</div>
+                        </td>
+                    `);
+
+                // 총 딜량 전시즌 대비 추가
+                totalDamageChanges.forEach((change, index) => {
+                    const bossName = ['드래곤', '대천사', '기계신'][index];
+
+                    if (change) {
+                        const changeClass = getChangeClass(change);
+                        const arrow = getChangeArrow(change);
+                        $row.append(`
+                                <td>
+                                    <span class="damage-change ${changeClass}">
+                                        <span class="change-arrow">${arrow}</span>${change}
+                                    </span>
+                                </td>
+                            `);
+                    } else {
+                        $row.append(`
+                                <td>
+                                    <span class="hidden-content">0%</span>
+                                </td>
+                            `);
+                    }
+                });
+
+                // 티켓당 딜량 전시즌 대비 추가
+                ticketChanges.forEach((change, index) => {
+                    const bossName = ['드래곤', '대천사', '기계신'][index];
+
+                    if (change) {
+                        const changeClass = getChangeClass(change);
+                        const arrow = getChangeArrow(change);
+                        $row.append(`
+                                <td>
+                                    <span class="damage-change ${changeClass}">
+                                        <span class="change-arrow">${arrow}</span>${change}
+                                    </span>
+                                </td>
+                            `);
+                    } else {
+                        $row.append(`
+                                <td>
+                                    <span class="hidden-content">0%</span>
+                                </td>
+                            `);
+                    }
+                });
+
+                $tbody.append($row);
+            });
+        }
+
+        // 이벤트 핸들러
+        $('#season-select').on('change', function() {
+            updateTable($(this).val());
+        });
+
+        $('input[name="format"]').on('change', function() {
+            const currentSeason = $('#season-select').val();
+            if (currentSeason) {
+                updateTable(currentSeason);
+            }
+        });
+
+        // 초기화
+        function init() {
+            initSeasonSelect();
+            $('#korean-format').prop('checked', true);
+            const latestSeason = seasonData[seasonData.length - 1][0];
+            $('#season-select').val(latestSeason);
+            updateTable(latestSeason);
+        }
+
+        init();
+    });
+</script>
+</body>
+</html>
