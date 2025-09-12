@@ -54,7 +54,14 @@
     $(document).ready(function() {
         // 데이터
         const seasonData = globalSeasonData;
-        const playerData = globalPlayerData;
+        const playerData = Object.fromEntries(
+            Object.entries(globalPlayerData).map(([season, rows]) => [
+                season,
+                rows.map(row =>
+                    row.map((v, i) => i === 0 ? v : Number(String(v).replace(/,/g, '')))
+                )
+            ])
+        );
 
         // 숫자 포맷팅 함수들
         function formatKorean(num) {
