@@ -90,11 +90,15 @@
         }
 
         .ticket-damage {
-            color: #9b59b6;
+            color: #1abc9c !important;
             font-size: 11px;
             font-weight: 600;
             margin-top: 3px;
-            opacity: 0.8;
+            opacity: 0.9;
+        }
+
+        .hidden-column {
+            display: none !important;
         }
 
         .damage-change {
@@ -384,6 +388,36 @@
             return 0;
         }
 
+        // 컬럼 표시/숨김 업데이트
+        function updateColumnVisibility(activeBosses) {
+            const bossNames = ['드래곤', '대천사', '기계신'];
+
+            bossNames.forEach((bossName, index) => {
+                const isActive = activeBosses.includes(bossName);
+
+                // 컬럼 인덱스 (nth-child는 1부터 시작)
+                const bossColIndex = index + 2; // 유저정보(1) 다음부터
+                const totalColIndex = index + 6; // 총합(5) 다음부터
+                const ticketColIndex = index + 9; // 전시즌대비 3개 다음부터
+
+                if (isActive) {
+                    // 보스 딜량 컬럼 표시
+                    $(`.data-table th:nth-child(${bossColIndex}), .data-table td:nth-child(${bossColIndex})`).removeClass('hidden-column');
+                    // 전시즌 대비 컬럼 표시
+                    $(`.data-table th:nth-child(${totalColIndex}), .data-table td:nth-child(${totalColIndex})`).removeClass('hidden-column');
+                    // 티켓당 대비 컬럼 표시
+                    $(`.data-table th:nth-child(${ticketColIndex}), .data-table td:nth-child(${ticketColIndex})`).removeClass('hidden-column');
+                } else {
+                    // 보스 딜량 컬럼 숨김
+                    $(`.data-table th:nth-child(${bossColIndex}), .data-table td:nth-child(${bossColIndex})`).addClass('hidden-column');
+                    // 전시즌 대비 컬럼 숨김
+                    $(`.data-table th:nth-child(${totalColIndex}), .data-table td:nth-child(${totalColIndex})`).addClass('hidden-column');
+                    // 티켓당 대비 컬럼 숨김
+                    $(`.data-table th:nth-child(${ticketColIndex}), .data-table td:nth-child(${ticketColIndex})`).addClass('hidden-column');
+                }
+            });
+        }
+
         // 시즌 선택 박스 초기화
         function initSeasonSelect() {
             const $select = $('#season-select');
@@ -441,10 +475,9 @@
 
                 // 각 보스별 딜량 표시 (티켓당 딜량 포함)
                 bossData.forEach(boss => {
-                    const isActive = activeBosses.includes(boss.name);
                     const hasData = boss.count > 0 && boss.damage > 0;
 
-                    if (isActive && hasData) {
+                    if (hasData) {
                         const ticketDamage = calculateTicketDamage(boss.damage, boss.count);
                         $row.append(`
                                 <td>
@@ -472,8 +505,6 @@
 
                 // 총 딜량 전시즌 대비 추가
                 totalDamageChanges.forEach((change, index) => {
-                    const bossName = ['드래곤', '대천사', '기계신'][index];
-
                     if (change) {
                         const changeClass = getChangeClass(change);
                         const arrow = getChangeArrow(change);
@@ -495,8 +526,6 @@
 
                 // 티켓당 딜량 전시즌 대비 추가
                 ticketChanges.forEach((change, index) => {
-                    const bossName = ['드래곤', '대천사', '기계신'][index];
-
                     if (change) {
                         const changeClass = getChangeClass(change);
                         const arrow = getChangeArrow(change);
@@ -518,6 +547,9 @@
 
                 $tbody.append($row);
             });
+
+            // 테이블 데이터 생성 완료 후 컬럼 표시/숨김 적용
+            updateColumnVisibility(activeBosses);
         }
 
         // 이벤트 핸들러
