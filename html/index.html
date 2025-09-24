@@ -11,7 +11,20 @@
     <div class="header">
         <h1>토벌전 참여 현황</h1>
     </div>
-
+    <div class="footer">
+        <div class="format-options">
+            <div class="format-option">
+                <input type="radio" id="korean-format" name="format" value="korean" checked>
+                <label for="korean-format">만단위 구분</label>
+            </div>
+            <div class="format-option">
+                <input type="radio" id="comma-format" name="format" value="comma">
+                <label for="comma-format">천단위 구분</label>
+            </div>
+        </div>
+        <select class="season-select" id="season-select">
+        </select>
+    </div>
     <table class="data-table">
         <thead>
         <tr>
@@ -31,21 +44,6 @@
         <tbody id="player-tbody">
         </tbody>
     </table>
-
-    <div class="footer">
-        <div class="format-options">
-            <div class="format-option">
-                <input type="radio" id="korean-format" name="format" value="korean" checked>
-                <label for="korean-format">만단위 구분</label>
-            </div>
-            <div class="format-option">
-                <input type="radio" id="comma-format" name="format" value="comma">
-                <label for="comma-format">천단위 구분</label>
-            </div>
-        </div>
-        <select class="season-select" id="season-select">
-        </select>
-    </div>
 </div>
 
 <script src="../static/js/jquery.min.js"></script>
